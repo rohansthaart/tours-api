@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('express-async-errors');
+const serverless = require("serverless-http");
 const express = require("express");
 const cors=require("cors");
 
@@ -34,7 +35,6 @@ app.use('/api/v1/tours', toursRoute)
 
 app.use('/api/v1/query', queryRoute)
 
-
 if(process.env.NODE_ENV == "production"){
     app.use(express.static("client/build"));
 }
@@ -44,8 +44,10 @@ const port = process.env.PORT || 3001;
 const start = async()=>{
     try{
         await connectDB(process.env.MONGO_URI)
-        app.listen(port,()=>
-        console.log(`server is listening on port ${port}...`))
+
+        module.exports.handler = serverless(app);
+        // app.listen(port,()=>
+        // console.log(`server is listening on port ${port}...`))
     }catch(error){
         console.log(error);
     }
