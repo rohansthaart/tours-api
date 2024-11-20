@@ -5,11 +5,19 @@ const Tour = require('../models/Tours')
 
 
 
-const getAllTours = async (req,res)=>{
-    const tours = await Tour.find()
-    res.status(200).json(tours)
-}
+const getAllTours = async (req, res) => {
+    const tours = await Tour.find().select('destination overview.details image');
 
+    const modifiedTours = tours.map(tour => ({
+        destination: tour.destination,
+        overview: {
+            details: tour.overview.details.slice(0, 100)
+        },
+        image: tour.image.length > 0 ? tour.image[0] : null
+    }));
+
+    res.status(200).json(modifiedTours);
+}
 const getTour = async(req,res) =>{
     const {params:{id}} = req
     const tour = await Tour.findById(id)
