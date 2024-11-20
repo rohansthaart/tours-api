@@ -6,14 +6,16 @@ const Tour = require('../models/Tours')
 
 
 const getAllTours = async (req, res) => {
-    const tours = await Tour.find().select('destination overview.details image');
+    const tours = await Tour.find().select('destination overview.details image category subCategory');
 
     const modifiedTours = tours.map(tour => ({
         destination: tour.destination,
         overview: {
             details: tour.overview.details.slice(0, 100)
         },
-        image: tour.image.length > 0 ? tour.image[0] : null
+        category: tour.category,
+        subCategory: tour.subCategory,
+        image: tour.image.length > 0 ? [tour.image[0]] : null
     }));
 
     res.status(200).json(modifiedTours);
